@@ -78,7 +78,6 @@ def editar_cliente_simulado(tree_clientes, clientes_col):
     e_saldo = tk.StringVar(value=f"{cliente_original.get('saldo_pendiente', 0.0):.2f}")
     
     # --- Widgets y Campos ---
-    # ... (Widgets de formulario con las variables e_nombre, e_telefono, etc.) ...
     ctk.CTkLabel(ventana_editar, text="ID Cliente:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
     ctk.CTkLabel(ventana_editar, text=id_visible, font=('Roboto', 10, 'bold')).grid(row=0, column=1, padx=10, pady=10, sticky="w")
     ctk.CTkLabel(ventana_editar, text="Nombre:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
@@ -93,11 +92,16 @@ def editar_cliente_simulado(tree_clientes, clientes_col):
     
     # 2. DEFINICIÓN ÚNICA DE LA FUNCIÓN DE GUARDADO
     def guardar_edicion_final():
-        nombre = e_nombre.get().strip(); telefono = e_telefono.get().strip()
+        
+        # 🟢 CORRECCIÓN: Las variables se acceden directamente del scope principal o de la StringVar 🟢
+        nombre = e_nombre.get().strip() # ✅
+        telefono = e_telefono.get().strip() # ✅
+        
         try:
-            saldo = float(e_saldo.get())
+            saldo = float(e_saldo.get()) # ✅
         except ValueError:
             messagebox.showerror("Error", "El Saldo debe ser un número válido."); return
+        
         if not nombre or not telefono:
             messagebox.showwarning("Advertencia", "Nombre y Teléfono son obligatorios."); return
 
@@ -118,11 +122,10 @@ def editar_cliente_simulado(tree_clientes, clientes_col):
             messagebox.showerror("Error DB", f"Fallo al actualizar: {e}")
 
     # 3. CONEXIÓN DEL BOTÓN (Usamos la función definida arriba)
-    # 🚨 Eliminamos el primer botón y la segunda definición.
     ctk.CTkButton(ventana_editar, text="💾 Guardar Cambios", command=guardar_edicion_final, fg_color="#007bff").grid(row=5, column=0, columnspan=2, pady=15)
     
     ventana_editar.transient(ventana_editar.master); ventana_editar.grab_set(); ventana_editar.wait_window()
-
+    
 def agregar_cliente_simulado(tree_clientes, clientes_col):
     """Abre un formulario para ingresar un nuevo cliente en MongoDB."""
     parent_window = tree_clientes.winfo_toplevel() 
